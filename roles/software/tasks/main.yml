@@ -1,0 +1,41 @@
+- name: Create the directory into which the software will be installed
+  file:
+      path: "{{ target_path }}"
+      state: directory
+
+- name: Copy the seed config to the remote directory
+  copy:
+      src: "{{ seed_config_path }}"
+      dest: "{{ target_path }}/seed.yml"
+
+- name: Download the Autoproj bootstrap script
+  get_url:
+      url: https://github.com/rock-core/autoproj/raw/master/bin/autoproj_bootstrap
+      dest: "{{ target_path }}/autoproj_bootstrap"
+
+- name: Install ruby
+  apt:
+      name: ruby
+
+- name: Bootstrap the workspace if needed
+  command: /usr/bin/ruby autoproj_bootstrap git {{ buildconf_url }} --seed-config={{ target_path }}/seed.yml git https://github.com/thirteenltda/repsol.heads-buildconf
+  args:
+      creates: "{{ target_path }}/autoproj/manifest"
+      chdir: "{{ target_path }}"
+  register: bootstrap_output
+  environment:
+      AUTOPROJ_BOOTSTRAP_IGNORE_NONEMPTY_DIR: 1
+
+- debug:
+    var: bootstrap_output
+
+- name: Install the packages
+  command: "{{ target_path }}/.autoproj/bin/autoproj update"
+  args:
+      chdir: "{{ target_path }}"
+
+- name: Build the packages
+  command: "{{ target_path }}/.autoproj/bin/autoproj build"
+  args:
+      chdir: "{{ target_path }}"
+
