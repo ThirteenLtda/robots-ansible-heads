@@ -1,0 +1,9 @@
+---
+- hosts: heads-navbox
+  become: true
+  tasks:
+      - include_role:
+          name: rock
+          tasks_from: create_user.yml
+        vars:
+          user_name: production

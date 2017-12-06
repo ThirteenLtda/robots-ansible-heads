@@ -1,0 +1,85 @@
+- name: install the github SSH host key
+  known_hosts:
+    name: github.com
+    key: "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=="
+  
+- name: Test that git ssh connection to github is working.
+  command: ssh -T git@github.com
+  ignore_errors: true
+  register: github_ssh_test
+
+- name: Fail if the github test failed
+  fail:
+    msg: Cannot connect to GitHub, have you added valid SSH keys to the agent with ssh-add ?
+  when: '"successfully authenticated" not in github_ssh_test.stderr'
+
+- name: install the UFRJ gitlab SSH host key
+  known_hosts:
+    name: gscar.coppe.ufrj.br
+    key: "gscar.coppe.ufrj.br ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNsL7qdk1vUEaltJcKIDNVnjVRtuicveoKNU5+KrO1VVBPafhgWhlIoYacpvSW0qeEf2SCtWH1OUIbadN7v539Y="
+  
+- name: Test that git ssh connection to UFRJ's gitlab is working.
+  command: ssh -T git@gscar.coppe.ufrj.br
+  ignore_errors: true
+  register: gitlab_ssh_test
+  
+- name: Fail if the gitlab test failed
+  fail:
+    msg: Cannot connect to GitLab, have you added valid SSH keys to the agent with ssh-add ?
+  when: '"Welcome to GitLab" not in gitlab_ssh_test.stdout'
+
+- name: "Create {{ target_path }}, where Rock will be installed for {{ user_name }}"
+  file:
+      path: "{{ target_path }}"
+      state: directory
+
+- name: "Copy the seed config to {{ target_path }}"
+  copy:
+      src: "{{ seed_config_path }}"
+      dest: "{{ target_path }}/seed.yml"
+
+- name: "Setup the Git user name"
+  git_config:
+      name: user.name
+      scope: global
+      value: "heads-navbox common user"
+
+- name: "Setup the Git user email"
+  git_config:
+      name: user.email
+      scope: global
+      value: "heads@do-not-use.com"
+   
+
+- name: "Install ruby"
+  apt:
+      name: ruby
+
+- name: "Download the Autoproj install script"
+  get_url:
+      url: https://github.com/rock-core/autoproj/raw/master/bin/autoproj_install
+      dest: "{{ target_path }}/autoproj_install"
+
+- name: "Install autoproj in {{ target_path }}"
+  command: "/usr/bin/ruby autoproj_install --seed-config={{ target_path }}/seed.yml"
+  args:
+      chdir: "{{ target_path }}"
+
+- name: "Bootstrap the workspace in {{ target_path }} if needed"
+  command: "{{ target_path }}/.autoproj/bin/autoproj bootstrap git {{ buildconf_url }}"
+  args:
+      creates: "{{ target_path }}/autoproj/manifest"
+      chdir: "{{ target_path }}"
+  environment:
+      AUTOPROJ_BOOTSTRAP_IGNORE_NONEMPTY_DIR: 1
+
+- name: "Install the packages in {{ target_path }}"
+  command: "{{ target_path }}/.autoproj/bin/autoproj update"
+  args:
+      chdir: "{{ target_path }}"
+
+- name: "Build the packages in {{ target_path }}"
+  command: "{{ target_path }}/.autoproj/bin/autoproj build"
+  args:
+      chdir: "{{ target_path }}"
+

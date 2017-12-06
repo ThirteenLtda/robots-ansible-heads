@@ -1,0 +1,12 @@
+---
+- hosts: heads-navbox
+  tasks:
+      - include_role:
+          name: rock
+        vars:
+          target_user: production
+          target_path: /home/production/dev
+          buildconf_url: https://github.com/thirteenltda/repsol.heads-buildconf
+          seed_config_path: files/production_seed_config.yml
+      - include_role:
+          name: navbox

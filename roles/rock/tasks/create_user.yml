@@ -1,0 +1,33 @@
+- name: create the {{ user_name }} user
+  user:
+      name: "{{ user_name }}"
+      group: users
+      skeleton: /etc/skel
+      createhome: true
+      shell: /bin/bash
+
+- name: make the software user able to install osdeps using APT
+  template:
+      src: files/sudoers.j2
+      dest: "/etc/sudoers.d/{{ user_name }}_osdeps_access"
+      validate: '/usr/sbin/visudo -cf %s'
+
+- name: get the path to the currently authenticated user's SSH keys
+  become: no
+  command: whoami
+  register: authenticated_user
+
+- name: "create {{ user_name }}'s .ssh folder"
+  file:
+      path: "/home/{{ user_name }}/.ssh"
+      state: directory
+      owner: "{{ user_name }}"
+      group: users
+      mode: 0700
+
+- name: copy the currently authenticated user's SSH keys
+  copy:
+      remote_src: true
+      src: "/home/{{ authenticated_user.stdout }}/.ssh/authorized_keys"
+      dest: /home/{{ user_name }}/.ssh/authorized_keys
+

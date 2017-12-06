@@ -1,0 +1,24 @@
+- name: Install the systemd service that cleans up the omniORB name service log file
+  copy:
+    src: files/omniorb4-clean-log.service
+    dest: /lib/systemd/system
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+
+- name: Enable the service
+  command: systemctl enable omniorb4-clean-log
+
+- name: Install the source of Gazebo packages (for libsdformat5)
+  copy:
+    src: files/gazebo-latest.list
+    dest: /etc/apt/sources.list.d/gazebo-latest.list
+
+- name: Install the OSRF APT Key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 67170598AF249743
+
+- name: Update APT cache to get the libsdformat5 package
+  apt:
+    update_cache: true

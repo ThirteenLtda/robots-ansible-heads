@@ -1,0 +1,7 @@
+- include_tasks: tasks/global.yml
+  become: yes
+- include_tasks: tasks/bootstrap_and_update.yml
+  become: no
+  vars:
+    ansible_user: "{{ target_user }}"
+
