@@ -1,0 +1,4 @@
+- name: 'Install Chrony'
+  include_tasks: tasks/chrony.yml
+  become: true
+      

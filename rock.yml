@@ -7,6 +7,15 @@
           target_user: production
           target_path: /home/production/dev
           buildconf_url: https://github.com/thirteenltda/repsol.heads-buildconf
+          buildconf_args: ""
           seed_config_path: files/production_seed_config.yml
+      - include_role:
+          name: rock
+        vars:
+          target_user: dev
+          target_path: /home/dev/dev
+          buildconf_url: https://github.com/thirteenltda/repsol.heads-buildconf
+          buildconf_args: ""
+          seed_config_path: files/dev_seed_config.yml
       - include_role:
           name: navbox
