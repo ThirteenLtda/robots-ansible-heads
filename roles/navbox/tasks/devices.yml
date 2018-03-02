@@ -1,0 +1,12 @@
+- name: "Install sysfsutils"
+  apt:
+      name: 'sysfsutils'
+
+- name: "Copy the FTDI settings file"
+  copy:
+      src: "files/etc/udev/rules.d/60-ftdi.rules"
+      dest: "/etc/udev/rules.d/60-ftdi.rules"
+
+- name: "Run udev"
+  shell: "udevadm control --reload"
+

@@ -1,4 +1,7 @@
 - name: 'Install Chrony'
   include_tasks: tasks/chrony.yml
   become: true
+- name: 'Setup device links and drivers'
+  include_tasks: tasks/devices.yml
+  become: true
       
