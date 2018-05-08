@@ -1,27 +1,29 @@
 ---
 - hosts: heads-navbox
   tasks:
-      - include_role:
+      - import_role:
           name: rock
         tags:
           - rock
+          - production
         vars:
           target_user: production
           target_path: /home/production/dev
           buildconf_url: https://github.com/thirteenltda/repsol.heads-buildconf
           buildconf_args: ""
           seed_config_path: files/production_seed_config.yml
-      - include_role:
+      - import_role:
           name: rock
         tags:
           - rock
+          - dev
         vars:
           target_user: dev
           target_path: /home/dev/dev
           buildconf_url: https://github.com/thirteenltda/repsol.heads-buildconf
           buildconf_args: ""
           seed_config_path: files/dev_seed_config.yml
-      - include_role:
+      - import_role:
           name: navbox
         tags:
           - system
