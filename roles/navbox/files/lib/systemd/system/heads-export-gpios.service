@@ -1,0 +1,9 @@
+[Unit]
+Description=Exports the user-visible GPIOs
+
+[Service]
+ExecStart=/usr/local/sbin/heads-export-gpios
+Type=oneshot
+
+[Install]
+WantedBy=basic.target

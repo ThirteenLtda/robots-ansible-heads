@@ -1,0 +1,25 @@
+- name: "Copy the Grub settings file to relax ACPI and liberate the GPIOs"
+  copy:
+      src: "files/etc/default/grub"
+      dest: "/etc/default/grub"
+
+- name: "Copy the script that exports all the user-visible GPIOs"
+  copy:
+      src: "files/usr/local/sbin/heads-export-gpios"
+      dest: "/usr/local/sbin/heads-export-gpios"
+      mode: 0755
+
+- name: "Copy the systemd file to export the GPIOs at startup"
+  copy:
+      src: "files/lib/systemd/system/heads-export-gpios.service"
+      dest: "/lib/systemd/system/heads-export-gpios.service"
+
+- name: "Enable the systemd GPIO service"
+  shell: "systemctl enable heads-export-gpios"
+  tags:
+      - gpios
+
+- name: "Run update-grub to enable the ACPI configuration needed by the GPIO driver"
+  shell: "update-grub"
+
+

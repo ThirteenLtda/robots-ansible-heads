@@ -1,0 +1,16 @@
+#! /bin/sh -ex
+
+# I don't know how to make sure that the systemd unit is started after
+# the module was loaded. Ensure it's loaded
+
+modprobe gpio-ich
+
+# Export is 436 + GPIO pin number as listed in the cable breakout document
+echo 470 > /sys/class/gpio/export # Pin 34
+echo 472 > /sys/class/gpio/export # Pin 36
+echo 473 > /sys/class/gpio/export # Pin 37
+echo 474 > /sys/class/gpio/export # Pin 38
+echo 475 > /sys/class/gpio/export # Pin 39
+echo 485 > /sys/class/gpio/export # Pin 49
+echo 504 > /sys/class/gpio/export # Pin 68
+echo 505 > /sys/class/gpio/export # Pin 69

@@ -1,6 +1,11 @@
 - name: 'Install Chrony'
   import_tasks: tasks/chrony.yml
   become: true
+- name: 'Setup the GPIOs'
+  import_tasks: tasks/gpios.yml
+  tags:
+      - gpios
+  become: true
 - name: 'Setup device links and drivers'
   import_tasks: tasks/devices.yml
   become: true
