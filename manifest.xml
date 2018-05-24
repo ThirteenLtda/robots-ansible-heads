@@ -1,0 +1,6 @@
+<package>
+  <description brief="Ansible playbook to install the HEADS boxes">
+  </description>
+  <author>Sylvain Joyeux/sylvain.joyeux@13robotics.com</author>
+  <license>Priorietary</license>
+</package>
