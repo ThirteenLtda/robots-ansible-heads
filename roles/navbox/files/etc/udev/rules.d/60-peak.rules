@@ -1,0 +1,2 @@
+ACTION=="add", KERNEL=="can0", SUBSYSTEM=="net", RUN+="/bin/ip link set can0 type can bitrate 1000000", RUN+="/sbin/ifconfig can0 up"
+

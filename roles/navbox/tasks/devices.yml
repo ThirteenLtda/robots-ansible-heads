@@ -7,6 +7,11 @@
       src: "files/etc/udev/rules.d/60-ftdi.rules"
       dest: "/etc/udev/rules.d/60-ftdi.rules"
 
+- name: "Copy the PEAK settings file"
+  copy:
+      src: "files/etc/udev/rules.d/60-peak.rules"
+      dest: "/etc/udev/rules.d/60-peak.rules"
+
 - name: "Run udev"
   shell: "udevadm control --reload"
 
