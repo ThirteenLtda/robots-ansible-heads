@@ -10,3 +10,11 @@
   import_tasks: tasks/devices.yml
   become: true
       
+- name: 'Setup the system to allow realtime execution'
+  become: true
+  copy:
+      src: files/etc/security/limits.d/rock-realtime.conf
+      dest: /etc/security/limits.d/rock-realtime.conf
+      mode: 0644
+      owner: root
+      group: root
