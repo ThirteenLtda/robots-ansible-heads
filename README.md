@@ -10,3 +10,7 @@ The rock.yml playbook does the actual bootstrap.
 the ssh agent so that ansible can authenticate with GitHub and GitLab. This
 is verified by the playbook (there's going to be a "clean" error if it
 is not).
+
+~~~
+ansible-playbook -K navbox.yml
+~~~
