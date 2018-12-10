@@ -18,3 +18,16 @@
       mode: 0644
       owner: root
       group: root
+
+- name: 'Copy the sysctl file to set MQ limits in /proc'
+  become: true
+  copy:
+      src: files/etc/sysctl.d/10-posix_mq.conf
+      dest: /etc/sysctl.d/10-posix_mq.conf
+      mode: 0644
+      owner: root
+      group: root
+
+- name: 'Apply sysctl changes'
+  become: true
+  shell: "sysctl --system"
